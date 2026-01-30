@@ -8,3 +8,5 @@ default-theme = "light"
 preferred-dark-theme = "ayu"
 
 [output.linkcheck]
+optional = true
+
