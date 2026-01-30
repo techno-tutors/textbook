@@ -8,6 +8,8 @@ smart-punctuation = true
 mathjax-support = true
 site-url = "/textbook/"
 default-theme = "light"
+git-repository-url = "https://github.com/techno-tutors/textbook/tree/main/"
+edit-url-template = "https://github.com/techno-tutors/textbook/edit/main/{path}"
 preferred-dark-theme = "ayu"
 
 [output.epub]
