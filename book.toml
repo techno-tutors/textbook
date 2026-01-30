@@ -6,6 +6,7 @@ language = "ja"
 [output.html]
 smart-punctuation = true
 mathjax-support = true
+site-url = "/textbook/"
 default-theme = "light"
 preferred-dark-theme = "ayu"
 
