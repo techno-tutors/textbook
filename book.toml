@@ -1,4 +1,9 @@
 [book]
 title = "JS Tutor Book"
 authors = ["k-kozika"]
-language = "en"
+language = "ja"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "ayu"
+
