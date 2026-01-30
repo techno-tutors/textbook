@@ -4,8 +4,17 @@ authors = ["k-kozika"]
 language = "ja"
 
 [output.html]
+smart-punctuation = true
+mathjax-support = true
 default-theme = "light"
 preferred-dark-theme = "ayu"
+
+[output.epub]
+optional = true
+additional-css = ["./assets/main.css"]
+curly-quotes = false
+epub-version = 3
+footnote-backrefs = true
 
 [output.linkcheck]
 optional = true

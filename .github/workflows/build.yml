@@ -1,0 +1,67 @@
+name: Build EPUB and create Release
+
+on:
+  push:
+    tags:
+      - 'v*'   # v1.2.3 のようなタグでトリガー
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    env:
+      MDBOOK_VERSION: 0.5.2
+      MDBOOK_EPUB_VERSION: 0.4.48
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.1
+        
+      - name: Install mdbook and mdbook-epub
+        run: |
+          mkdir bin
+          curl -sSL https://github.com/rust-lang/mdBook/releases/download/v${MDBOOK_VERSION}/mdbook-v${MDBOOK_VERSION}-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=bin
+          curl -L https://github.com/Michael-F-Bryan/mdbook-epub/releases/download/v${MDBOOK_EPUB_VERSION}/mdbook-epub-linux-amd64 -o bin/mdbook-epub
+          chmod +x bin/mdbook-epub
+
+
+      - name: Build mdBook (HTML + epub backend)
+        run: |
+          export PATH=$PWD/bin:$PATH
+          mdbook build
+
+      - name: Locate EPUB
+        id: find_epub
+        run: |
+          set -e
+          epub=$(ls book/epub/*.epub 2>/dev/null || true)
+          if [ -z "$epub" ]; then
+            echo "No epub found in book/epub. Listing book/:"
+            ls -la book || true
+            exit 1
+          fi
+          echo "epub=$epub" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body: |
+            Automated release generated from tag `${{ github.ref_name }}`.
+            Commits:
+            ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false
+
+      - name: Upload EPUB to Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.find_epub.outputs.epub }}
+          asset_name: ${{ steps.find_epub.outputs.epub | basename }}
+          asset_content_type: application/epub+zip
